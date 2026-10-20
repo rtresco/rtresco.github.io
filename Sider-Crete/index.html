@@ -162,7 +162,8 @@ function calculate(){
  const u=unitInfo(),avgDepth=(v.minDepth+v.maxDepth)/2;
  const surfaceArea=bottom+circumference*avgDepth;
  const displayedArea=units==='english'?Math.max(0,parseInt(surfaceArea+.4)):surfaceArea;
- const volume=bottom*avgDepth*u.factor;
+ const volumeBottom=selected==='oval'?Math.PI*(v.length/2)*(v.width/2):bottom;
+ const volume=volumeBottom*avgDepth*u.factor;
  $('area').innerHTML=`${Number(displayedArea.toFixed(units==='english'?0:2)).toLocaleString(undefined,{maximumFractionDigits:units==='english'?0:2})} <span style="font-size:14px;font-weight:650">${u.area}</span>`;
  $('gallons').textContent=parseInt(volume).toLocaleString()+' '+u.volume;
  const areaSqFt=units==='english'?surfaceArea:surfaceArea*10.7639104167;
