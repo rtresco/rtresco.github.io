@@ -161,7 +161,7 @@ function calculate(){
  const displayedArea=units==='english'?Math.max(0,parseInt(surfaceArea+.4)):surfaceArea;
  const volume=bottom*avgDepth*u.factor;
  $('area').innerHTML=`${Number(displayedArea.toFixed(units==='english'?0:2)).toLocaleString(undefined,{maximumFractionDigits:units==='english'?0:2})} <span style="font-size:14px;font-weight:650">${u.area}</span>`;
- $('gallons').textContent=Math.round(volume).toLocaleString()+' '+u.volume;
+ $('gallons').textContent=parseInt(volume).toLocaleString()+' '+u.volume;
  const areaSqFt=units==='english'?surfaceArea:surfaceArea*10.7639104167;
  $('kits').textContent=Math.ceil(Math.max(0,areaSqFt)/60).toLocaleString();
  $('areaSub').textContent='Bottom plus interior walls';
