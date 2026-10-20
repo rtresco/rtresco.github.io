@@ -26,12 +26,12 @@
 </div></main>
 <script>
 const defs={
- round:{name:'Round',fields:[['minDepth','Minimum depth'],['maxDepth','Maximum depth'],['diameter','Diameter']],formula:'circle'},
- oval:{name:'Oval',fields:[['minDepth','Minimum depth'],['maxDepth','Maximum depth'],['length','Length'],['width','Width']],formula:'oval'},
- rectangle:{name:'Rectangle',fields:[['minDepth','Minimum depth'],['maxDepth','Maximum depth'],['length','Length'],['width','Width']],formula:'rectangle'},
- lazy:{name:'Lazy-L',fields:[['minDepth','Minimum depth'],['maxDepth','Maximum depth'],['length1','Length 1'],['length2','Length 2'],['length3','Length 3'],['length4','Length 4'],['width1','Width 1'],['width2','Width 2']],formula:'lazy'},
- roman:{name:'Roman',fields:[['minDepth','Minimum depth'],['maxDepth','Maximum depth'],['width','Width'],['length1','Length 1 (straight section)'],['length2','Length 2 (overall length)']],formula:'roman'},
- kidney:{name:'Kidney',fields:[['minDepth','Minimum depth'],['maxDepth','Maximum depth'],['diameter1','Diameter 1'],['diameter2','Diameter 2']],formula:'kidney'}
+ round:{name:'Round',fields:[['diameter','Diameter'],['minDepth','Minimum depth'],['maxDepth','Maximum depth']],formula:'circle'},
+ oval:{name:'Oval',fields:[['length','Length'],['width','Width'],['minDepth','Minimum depth'],['maxDepth','Maximum depth']],formula:'oval'},
+ rectangle:{name:'Rectangle',fields:[['length','Length'],['width','Width'],['minDepth','Minimum depth'],['maxDepth','Maximum depth']],formula:'rectangle'},
+ lazy:{name:'Lazy-L',fields:[['length1','Length 1'],['length2','Length 2'],['length3','Length 3'],['length4','Length 4'],['width1','Width 1'],['width2','Width 2'],['minDepth','Minimum depth'],['maxDepth','Maximum depth']],formula:'lazy'},
+ roman:{name:'Roman',fields:[['width','Width'],['length1','Length 1 (straight section)'],['length2','Length 2 (overall length)'],['minDepth','Minimum depth'],['maxDepth','Maximum depth']],formula:'roman'},
+ kidney:{name:'Kidney',fields:[['diameter1','Diameter 1'],['diameter2','Diameter 2'],['minDepth','Minimum depth'],['maxDepth','Maximum depth']],formula:'kidney'}
 };
 let selected='round'; let units='english'; const $=id=>document.getElementById(id);
 function unitInfo(){return units==='english'?{length:'ft',area:'sq ft',volume:'gal',title:'English units',note:'(all dimensions in feet)',factor:7.48052}:{length:'m',area:'m²',volume:'L',title:'Metric units',note:'(all dimensions in meters)',factor:1000};}
