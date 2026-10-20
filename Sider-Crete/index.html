@@ -105,7 +105,10 @@ function updateCalcNote(){
  const volumeFormula=units==='english'
   ? 'Volume uses bottom area × average depth × 7.48052 to convert cubic feet to US gallons.'
   : 'Volume uses bottom area × average depth × 1,000 to convert cubic meters to liters.';
- $('calcNote').innerHTML=`<strong>How the ${defs[selected].name} pool is calculated:</strong> ${notes[selected]} Total interior surface area = bottom area + (circumference × average depth). ${depthNote}${volumeFormula} Kit count is rounded up using 60 sq ft per kit.`;
+ const kitNote=units==='english'
+  ? 'Kit count is rounded up using 60 sq ft per kit.'
+  : 'Kit count is rounded up using 60 sq ft per kit (approximately 5.57 m² per kit).';
+ $('calcNote').innerHTML=`<strong>How the ${defs[selected].name} pool is calculated:</strong> ${notes[selected]} Total interior surface area = bottom area + (circumference × average depth). ${depthNote}${volumeFormula} ${kitNote}`;
 }
 function calculate(){
  const d=defs[selected],v={};
