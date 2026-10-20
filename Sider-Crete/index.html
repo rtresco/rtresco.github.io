@@ -93,26 +93,81 @@ function drawDiagram(){
  $('diagramNote').textContent=({lazy:'Follow each labeled edge and width; irregular-shape area is estimated.',kidney:'Each diameter is shown across the center of its respective lobe.',roman:'Length 1 is the straight section; Length 2 is the overall length.'})[k]||'Dimension arrows show exactly where each measurement should be taken.';
 }
 function updateCalcNote(){
- const areaUnit=units==='english'?'sq ft':'m²';
- const depthUnit=units==='english'?'ft':'m';
- const volumeUnit=units==='english'?'gallons':'liters';
- const volumeFormula=units==='english'
-   ? `Volume = surface area (${areaUnit}) × average depth (${depthUnit}) × 7.48052 to convert cubic feet to US gallons.`
-   : `Volume = surface area (${areaUnit}) × average depth (${depthUnit}) × 1,000 to convert cubic meters to liters.`;
- const shapes={
-  round:`The Round pool area is calculated as a circle: π × (diameter ÷ 2)².`,
-  oval:`The Oval pool area is estimated as an ellipse: π × length × width ÷ 4.`,
-  rectangle:`The Rectangle pool area is length × width.`,
-  lazy:`The Lazy-L area is estimated by adding two trapezoid-like sections: average of Lengths 1 and 2 × Width 1, plus average of Lengths 3 and 4 × Width 2. This is an approximation of the irregular outline.`,
-  roman:`The Roman pool area is estimated as a rectangular straight section plus a semicircular end. The straight section is derived from the straight-section and overall-length measurements, and the rounded end uses half a circle based on the pool width.`,
-  kidney:`The Kidney pool area is estimated from the two lobe diameters using 0.45 × the average of Diameter 1 and Diameter 2 × the larger diameter. Because a kidney outline varies, this is an approximate area formula.`
+ const depthNote='Average depth = (minimum depth + maximum depth) ÷ 2. ';
+ const notes={
+  round:'Bottom area = π × (diameter ÷ 2)²; circumference = π × diameter.',
+  oval:'Bottom area = 0.8 × length × width; circumference = π × √[0.5 × (length² + width²)].',
+  rectangle:'Bottom area = length × width; circumference = 2 × (length + width).',
+  lazy:'Bottom area = 0.5 × [width 1 × (length 1 + length 2) + width 2 × (length 3 + length 4)]; circumference = the sum of all four lengths and both widths.',
+  roman:'Bottom area = (length 1 × width) + 0.8 × [(length 2 − length 1) × width]; circumference uses the original Roman-pool straight-edge and rounded-end formula.',
+  kidney:'Bottom area = the areas of two circles, one for each diameter; circumference = π × diameter 1 + π × diameter 2.'
  };
- const shapeNote=shapes[selected];
- const depthNote=`Average depth = (minimum depth + maximum depth) ÷ 2. `;
- const approximation=(selected==='lazy'||selected==='roman'||selected==='kidney')?' This shape formula is an estimate; actual volume can vary with the pool’s exact outline and floor profile.':'';
- $('calcNote').innerHTML=`<strong>How the ${defs[selected].name} pool is calculated:</strong> ${shapeNote} ${depthNote}${volumeFormula}${approximation}`;
+ const volumeFormula=units==='english'
+  ? 'Volume uses bottom area × average depth × 7.48052 to convert cubic feet to US gallons.'
+  : 'Volume uses bottom area × average depth × 1,000 to convert cubic meters to liters.';
+ $('calcNote').innerHTML=`<strong>How the ${defs[selected].name} pool is calculated:</strong> ${notes[selected]} Total interior surface area = bottom area + (circumference × average depth). ${depthNote}${volumeFormula} Kit count is rounded up using 60 sq ft per kit.`;
 }
-function calculate(){const d=defs[selected],v={};for(const [key,label] of d.fields){const n=Number($(key).value);if($(key).value.trim()===''||!Number.isFinite(n)||n<=0){$('error').textContent=`Please enter a number greater than zero for ${label.toLowerCase()}.`;$('error').style.display='block';$(key).focus();return;}v[key]=n;}if(v.maxDepth<v.minDepth){$('error').textContent='Maximum depth must be greater than or equal to minimum depth.';$('error').style.display='block';$('maxDepth').focus();return;}let a=0;switch(selected){case'round':a=Math.PI*Math.pow(v.diameter/2,2);break;case'oval':a=Math.PI*v.length*v.width/4;break;case'rectangle':a=v.length*v.width;break;case'lazy':a=((v.length1+v.length2)/2*v.width1)+((v.length3+v.length4)/2*v.width2);break;case'roman':{const straight=Math.min(v.length1,v.length2-v.width/2);a=Math.max(0,straight)*v.width+(Math.PI*Math.pow(v.width/2,2)/2);break;}case'kidney':a=.45*(v.diameter1+v.diameter2)/2*Math.max(v.diameter1,v.diameter2);break;}if(!Number.isFinite(a)||a<=0){$('error').textContent='These measurements do not produce a valid area. Please check the dimensions.';$('error').style.display='block';return;}const u=unitInfo();const volume=a*((v.minDepth+v.maxDepth)/2)*u.factor;$('area').innerHTML=`${Number(a.toFixed(2)).toLocaleString(undefined,{maximumFractionDigits:2})} <span style="font-size:14px;font-weight:650">${u.area}</span>`;$('gallons').textContent=Math.round(volume).toLocaleString()+' '+u.volume;const areaSqFt=units==='english'?a:a*10.7639104167;$('kits').textContent=Math.ceil(areaSqFt/60).toLocaleString();$('areaSub').textContent=units==='english'?'Estimated water surface':'Estimated water surface';$('volumeSub').textContent=units==='english'?'Based on average pool depth':'Estimated water volume';updateCalcNote();$('error').style.display='none';}
+function calculate(){
+ const d=defs[selected],v={};
+ for(const [key,label] of d.fields){
+  const raw=$(key).value,n=Number(raw);
+  if(raw.trim()===''||!Number.isFinite(n)||n<=0){
+   $('error').textContent=`Please enter a number greater than zero for ${label.toLowerCase()}.`;
+   $('error').style.display='block';$(key).focus();return;
+  }
+  v[key]=n;
+ }
+ if(v.maxDepth<v.minDepth){
+  $('error').textContent='Maximum depth must be greater than or equal to minimum depth.';
+  $('error').style.display='block';$('maxDepth').focus();return;
+ }
+ let bottom=0,circumference=0;
+ switch(selected){
+  case'round':
+   bottom=Math.PI*(v.diameter/2)*(v.diameter/2);
+   circumference=Math.PI*v.diameter;
+   break;
+  case'oval':
+   bottom=.8*v.length*v.width;
+   circumference=(2*Math.PI*Math.sqrt(.5*(v.length*v.length+v.width*v.width)))/2;
+   break;
+  case'rectangle':
+   bottom=v.length*v.width;
+   circumference=2*(v.length+v.width);
+   break;
+  case'lazy':
+   bottom=.5*(v.width1*(v.length1+v.length2)+v.width2*(v.length3+v.length4));
+   circumference=v.length1+v.length2+v.length3+v.length4+v.width1+v.width2;
+   break;
+  case'roman':
+   if(v.length2<v.length1){
+    $('error').textContent='Overall length (Length 2) must be greater than or equal to Length 1.';
+    $('error').style.display='block';$('length2').focus();return;
+   }
+   bottom=(v.length1*v.width)+.8*((v.length2-v.length1)*v.width);
+   circumference=v.width+v.length1+v.length1+(2*Math.PI*Math.sqrt(.5*((v.length2-v.length1)*(v.length2-v.length1)+(v.width/2)*(v.width/2))))/2;
+   break;
+  case'kidney':
+   bottom=(Math.PI*(v.diameter1/2)*(v.diameter1/2))+(Math.PI*(v.diameter2/2)*(v.diameter2/2));
+   circumference=(Math.PI*v.diameter1)+(Math.PI*v.diameter2);
+   break;
+ }
+ if(!Number.isFinite(bottom)||bottom<=0||!Number.isFinite(circumference)||circumference<=0){
+  $('error').textContent='These measurements do not produce a valid area. Please check the dimensions.';
+  $('error').style.display='block';return;
+ }
+ const u=unitInfo(),avgDepth=(v.minDepth+v.maxDepth)/2;
+ const surfaceArea=bottom+circumference*avgDepth;
+ const displayedArea=units==='english'?Math.max(0,parseInt(surfaceArea+.4)):surfaceArea;
+ const volume=bottom*avgDepth*u.factor;
+ $('area').innerHTML=`${Number(displayedArea.toFixed(units==='english'?0:2)).toLocaleString(undefined,{maximumFractionDigits:units==='english'?0:2})} <span style="font-size:14px;font-weight:650">${u.area}</span>`;
+ $('gallons').textContent=Math.round(volume).toLocaleString()+' '+u.volume;
+ const areaSqFt=units==='english'?surfaceArea:surfaceArea*10.7639104167;
+ $('kits').textContent=Math.ceil(Math.max(0,areaSqFt)/60).toLocaleString();
+ $('areaSub').textContent='Bottom plus interior walls';
+ $('volumeSub').textContent=units==='english'?'Based on bottom area and average depth':'Estimated water volume';
+ updateCalcNote();$('error').style.display='none';
+}
 function clearResults(){const u=unitInfo();$('area').innerHTML=`— <span style="font-size:14px;font-weight:650">${u.area}</span>`;$('gallons').textContent='—';$('kits').textContent='—';updateCalcNote();}
 $('englishBtn').addEventListener('click',()=>setUnits('english'));$('metricBtn').addEventListener('click',()=>setUnits('metric'));$('calculate').addEventListener('click',calculate);$('reset').addEventListener('click',()=>{renderFields();clearResults();});$('fields').addEventListener('keydown',e=>{if(e.key==='Enter')calculate()});$('volumeLabel').textContent=units==='english'?'Estimated number of gallons':'Estimated number of liters';renderShapes();renderFields();drawDiagram();clearResults();
 </script></body></html>
