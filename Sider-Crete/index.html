@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pool Surface Area & Gallons Calculator</title>
+<style>
+:root{--navy:#10345b;--blue:#1687cf;--aqua:#62d8f4;--ink:#172b43;--muted:#64748b;--line:#d9e5ef;--soft:#f3f9fd;--green:#a8d938;--green-dark:#6c9f18;--white:#fff;--shadow:0 18px 50px #0c355314}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#eaf7ff,#f8fbfe 55%,#e9f8f6);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);min-height:100vh;padding:34px 18px}
+.wrap{max-width:1040px;margin:0 auto}.hero{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:0 0 22px}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#1687cf}.hero h1{font-size:clamp(26px,4vw,38px);line-height:1.12;margin:7px 0 8px;color:var(--navy);letter-spacing:-.04em}.hero p{margin:0;color:var(--muted);font-size:15px}.watermark{width:72px;height:72px;flex:none;border-radius:22px;background:linear-gradient(145deg,#1488d1,#6de0f1);box-shadow:0 10px 22px #1385c72b;display:grid;place-items:center;color:white}
+.panel{background:#ffffffed;border:1px solid #fff;border-radius:24px;box-shadow:var(--shadow);overflow:hidden}.section{padding:26px 28px}.section+.section{border-top:1px solid #e8f0f6}.section-title{display:flex;align-items:center;gap:10px;margin:0 0 18px;font-size:16px;font-weight:800;color:var(--navy)}.step{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:#e4f5ff;color:#1385c7;font-size:13px}
+
+.unit-choice{display:grid;grid-template-columns:repeat(2,minmax(0,220px));gap:12px}.unit-option{display:flex;align-items:center;gap:12px;text-align:left;padding:13px 16px;border:1.5px solid #d9e5ef;background:#f7fbfe;border-radius:14px;color:#304963;font:inherit;cursor:pointer;transition:.15s}.unit-option:hover{border-color:#9ddcf7}.unit-option.active{border-color:#39a9e7;background:#e8f7ff;box-shadow:inset 0 0 0 1px #39a9e7}.unit-option strong,.unit-option small{display:block}.unit-option strong{font-size:14px}.unit-option small{font-size:11px;color:#71879a;margin-top:3px}.unit-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:11px;background:#dff3ff;color:#087dbb;font-weight:850;font-size:17px;flex:none}
+.shapes{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}.shape{border:1.5px solid transparent;background:#f4f9fc;border-radius:16px;padding:13px 8px 10px;cursor:pointer;color:#435a70;font:inherit;transition:.18s;display:flex;align-items:center;flex-direction:column;gap:8px;min-width:0}.shape:hover{border-color:#9ddcf7;transform:translateY(-2px)}.shape[aria-pressed="true"]{background:#e8f7ff;border-color:#39a9e7;box-shadow:inset 0 0 0 1px #39a9e7;color:var(--navy)}.shape svg{width:72px;height:52px;max-width:100%;overflow:visible}.shape span{font-size:13px;font-weight:750}.shape small{font-size:10px;color:#6d8497;font-weight:500}.shape[aria-pressed="true"] small{color:#1687cf}
+.workspace{display:grid;grid-template-columns:minmax(280px,1fr) minmax(300px,.95fr);gap:28px;align-items:center}.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}.field{min-width:0}.field label{display:block;font-size:13px;font-weight:750;color:#304963;margin-bottom:7px}.input-wrap{display:flex;align-items:center;gap:9px}.input-wrap input{width:100%;min-width:0;border:1.5px solid #cbdce9;border-radius:10px;padding:12px 12px;font:inherit;font-size:15px;color:var(--navy);background:#fbfdff;outline:none;transition:.15s}.input-wrap input:focus{border-color:#1687cf;box-shadow:0 0 0 3px #1687cf20;background:#fff}.unit{font-size:12px;color:#6a8093;font-weight:650;white-space:nowrap}.diagram-card{background:linear-gradient(145deg,#f4fbff,#e9f8ff);border:1px solid #d8edf8;border-radius:20px;padding:18px;min-height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center}.diagram{width:100%;max-width:390px;height:220px}.diagram-note{font-size:12px;color:#698397;margin-top:7px;text-align:center}.actions{display:flex;gap:12px;margin-top:20px}.btn{border:0;border-radius:11px;padding:13px 21px;font:inherit;font-size:13px;font-weight:850;letter-spacing:.02em;cursor:pointer;transition:.15s}.btn-primary{background:linear-gradient(135deg,#b7e64a,#8dc526);color:#203a05;box-shadow:0 6px 14px #9bcf322e;flex:1}.btn-primary:hover{filter:brightness(1.03);transform:translateY(-1px)}.btn-secondary{background:#edf3f7;color:#53697d}.btn-secondary:hover{background:#e1ebf2}.error{display:none;margin-top:12px;color:#b42318;font-size:13px;font-weight:650}.results{display:grid;grid-template-columns:1fr 1fr;gap:14px}.result{border-radius:17px;padding:19px 20px;background:linear-gradient(145deg,#f2faff,#e7f6ff);border:1px solid #d9edf9}.result.gallons{background:linear-gradient(145deg,#f4fbe8,#eaf7d1);border-color:#e0efbf}.result-label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#547087}.result-value{font-size:clamp(23px,3vw,31px);font-weight:850;letter-spacing:-.04em;color:var(--navy);margin:7px 0 3px;overflow-wrap:anywhere}.gallons .result-value{color:#426d0c}.result-sub{font-size:12px;color:#71879a}.footnote{font-size:12px;color:#718397;line-height:1.5;margin:16px 0 0}.footnote strong{color:#516a80}.footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:15px 28px;background:#f8fbfd;color:#8093a4;font-size:11px}.footer a{color:#1687cf;text-decoration:none}
+@media(max-width:760px){body{padding:20px 12px}.hero{margin-bottom:16px}.section{padding:21px 18px}.workspace{grid-template-columns:1fr}.diagram-card{min-height:220px;order:-1}.diagram{height:190px}.shapes{gap:6px}.shape{padding:10px 4px 8px;border-radius:12px}.shape svg{height:42px}.shape span{font-size:11px}.shape small{display:none}.fields{gap:13px}.footer{padding:14px 18px}}
+@media(max-width:430px){.watermark{width:54px;height:54px;border-radius:16px}.shapes{grid-template-columns:repeat(3,minmax(0,1fr))}.shape svg{width:68px;height:44px}.fields{grid-template-columns:1fr 1fr}.results{grid-template-columns:1fr}.result{padding:16px 18px}.result-value{font-size:27px}.actions{gap:8px}.btn{padding:12px 14px}}
+</style></head>
+<body><main class="wrap">
+<header class="hero"><div><div class="eyebrow">Pool planning tool</div><h1>Pool Surface Area &amp; Volume</h1><p>Choose your pool shape, enter your measurements, and get an estimate.</p></div><div class="watermark" aria-hidden="true"><svg width="42" height="42" viewBox="0 0 42 42" fill="none"><path d="M4 15c5-5 9 5 14 0s9 5 14 0 6-1 6-1M4 23c5-5 9 5 14 0s9 5 14 0 6-1 6-1M4 31c5-5 9 5 14 0s9 5 14 0 6-1 6-1" stroke="white" stroke-width="2.7" stroke-linecap="round"/></svg></div></header>
+<div class="panel">
+<section class="section"><h2 class="section-title"><span class="step">1</span>Choose measurement units</h2><div class="unit-choice" role="group" aria-label="Measurement system"><button type="button" class="unit-option active" id="englishBtn" aria-pressed="true"><span class="unit-icon">ft</span><span><strong>English</strong><small>Feet · gallons</small></span></button><button type="button" class="unit-option" id="metricBtn" aria-pressed="false"><span class="unit-icon">m</span><span><strong>Metric</strong><small>Meters · liters</small></span></button></div></section>
+<section class="section"><h2 class="section-title"><span class="step">2</span>Select your pool shape</h2><div class="shapes" id="shapes"></div></section>
+<section class="section"><h2 class="section-title"><span class="step">3</span>Enter your measurements <span id="measureUnitNote" style="font-size:12px;font-weight:500;color:#8194a4">(all dimensions in feet)</span></h2><div class="workspace"><div><div id="fields" class="fields"></div><div class="actions"><button class="btn btn-primary" id="calculate">Calculate results ↗</button><button class="btn btn-secondary" id="reset" type="button">Reset</button></div><div class="error" id="error" role="alert"></div></div><div class="diagram-card"><svg id="diagram" class="diagram" viewBox="0 0 360 220" role="img" aria-label="Pool shape measurement diagram"></svg><div class="diagram-note" id="diagramNote">Illustrative diagram — enter your pool's measurements.</div></div></div></section>
+<section class="section"><h2 class="section-title"><span class="step">4</span>View your estimated surface area and volume</h2><div class="results"><div class="result"><div class="result-label">Total pool surface area</div><div class="result-value" id="area">— <span style="font-size:14px;font-weight:650">sq ft</span></div><div class="result-sub" id="areaSub">Estimated water surface</div></div><div class="result gallons"><div class="result-label" id="volumeLabel">Estimated number of gallons</div><div class="result-value" id="gallons">—</div><div class="result-sub" id="volumeSub">Based on average pool depth</div></div></div><p class="footnote" id="calcNote"><strong>How this is calculated:</strong> Gallons = surface area × average depth × 7.48. Average depth is the midpoint of minimum and maximum depth. Irregular shapes use an approximate area formula, so results are estimates.</p></section>
+<div class="footer"><span id="footerUnits">Pool volume calculator · English units</span><span>For planning purposes; actual volume may vary.</span></div>
+</div></main>
+<script>
+const defs={
+ round:{name:'Round',fields:[['minDepth','Minimum depth'],['maxDepth','Maximum depth'],['diameter','Diameter']],formula:'circle'},
+ oval:{name:'Oval',fields:[['minDepth','Minimum depth'],['maxDepth','Maximum depth'],['length','Length'],['width','Width']],formula:'oval'},
+ rectangle:{name:'Rectangle',fields:[['minDepth','Minimum depth'],['maxDepth','Maximum depth'],['length','Length'],['width','Width']],formula:'rectangle'},
+ lazy:{name:'Lazy-L',fields:[['minDepth','Minimum depth'],['maxDepth','Maximum depth'],['length1','Length 1'],['length2','Length 2'],['length3','Length 3'],['length4','Length 4'],['width1','Width 1'],['width2','Width 2']],formula:'lazy'},
+ roman:{name:'Roman',fields:[['minDepth','Minimum depth'],['maxDepth','Maximum depth'],['width','Width'],['length1','Length 1 (straight section)'],['length2','Length 2 (overall length)']],formula:'roman'},
+ kidney:{name:'Kidney',fields:[['minDepth','Minimum depth'],['maxDepth','Maximum depth'],['diameter1','Diameter 1'],['diameter2','Diameter 2']],formula:'kidney'}
+};
+let selected='round'; let units='english'; const $=id=>document.getElementById(id);
+function unitInfo(){return units==='english'?{length:'ft',area:'sq ft',volume:'gal',title:'English units',note:'(all dimensions in feet)',factor:7.48052}:{length:'m',area:'m²',volume:'L',title:'Metric units',note:'(all dimensions in meters)',factor:1000};}
+function setUnits(next){if(units===next)return;units=next;$('volumeLabel').textContent=units==='english'?'Estimated number of gallons':'Estimated number of liters';$('englishBtn').classList.toggle('active',units==='english');$('metricBtn').classList.toggle('active',units==='metric');$('englishBtn').setAttribute('aria-pressed',String(units==='english'));$('metricBtn').setAttribute('aria-pressed',String(units==='metric'));$('measureUnitNote').textContent=unitInfo().note;$('footerUnits').textContent='Pool volume calculator · '+unitInfo().title;renderFields();clearResults();}
+function shapeIcon(key){const shape=poolPath(key);return `<svg viewBox="35 15 290 180" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="g${key}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#36b8f0"/><stop offset="1" stop-color="#0878c4"/></linearGradient><pattern id="p${key}" width="14" height="12" patternUnits="userSpaceOnUse"><path d="M0 7 Q4 1 8 7 T16 7" fill="none" stroke="#b8efff" stroke-width="1.3" opacity=".8"/></pattern></defs><g fill="url(#g${key})" stroke="#123a62" stroke-width="5.5" stroke-linejoin="round">${shape}</g><g fill="url(#p${key})" stroke="none">${shape}</g></svg>`}
+function renderShapes(){ $('shapes').innerHTML=Object.keys(defs).map(k=>`<button class="shape" type="button" data-shape="${k}" aria-pressed="${k===selected}">${shapeIcon(k)}<span>${defs[k].name}</span><small>${k===selected?'Selected':'Select shape'}</small></button>`).join('');document.querySelectorAll('.shape').forEach(b=>b.addEventListener('click',()=>{selected=b.dataset.shape;renderShapes();renderFields();drawDiagram();clearResults()}));}
+function renderFields(){const d=defs[selected],u=unitInfo();$('fields').innerHTML=d.fields.map(([key,label])=>`<div class="field"><label for="${key}">${label}</label><div class="input-wrap"><input id="${key}" name="${key}" type="number" min="0" step="any" inputmode="decimal" placeholder="0.0" aria-label="${label} in ${u.length}"><span class="unit">${u.length}</span></div></div>`).join('');$('error').style.display='none';}
+function poolPath(key){switch(key){case'round':return '<circle cx="180" cy="105" r="76"/>';case'oval':return '<ellipse cx="180" cy="105" rx="120" ry="72"/>';case'rectangle':return '<rect x="65" y="39" width="230" height="132" rx="5"/>';case'lazy':return '<path d="M72 66 L143 22 L202 98 L286 98 L286 166 L164 166 Z"/>';case'roman':return '<path d="M65 39 H208 A66 66 0 0 1 208 171 H65 Z"/>';case'kidney':return '<path d="M88 45 C55 57 48 94 61 125 C73 154 103 174 132 166 C153 160 166 145 190 145 C215 145 237 164 261 155 C291 144 304 117 296 91 C289 68 269 57 246 62 C226 66 211 79 194 73 C181 68 175 48 156 36 C137 24 109 31 88 45 Z"/>'}}
+function drawDiagram(){
+ const k=selected;
+ const dims={
+  round:[{t:'DIAMETER',x1:104,y1:105,x2:256,y2:105,tx:180,ty:91}],
+  oval:[{t:'LENGTH',x1:60,y1:193,x2:300,y2:193,tx:180,ty:185},{t:'WIDTH',x1:180,y1:33,x2:180,y2:177,tx:180,ty:113,rotate:-90}],
+  rectangle:[{t:'LENGTH',x1:65,y1:194,x2:295,y2:194,tx:180,ty:186},{t:'WIDTH',x1:45,y1:39,x2:45,y2:171,tx:45,ty:105,rotate:-90}],
+  lazy:[{t:'LENGTH 1',x1:151,y1:15,x2:211,y2:92,tx:181,ty:49,rotate:52},{t:'LENGTH 2',x1:55,y1:81,x2:148,y2:174,tx:99,ty:128,rotate:45},{t:'LENGTH 3',x1:202,y1:84,x2:286,y2:84,tx:244,ty:76},{t:'LENGTH 4',x1:164,y1:182,x2:286,y2:182,tx:225,ty:174},{t:'WIDTH 1',x1:61,y1:48,x2:132,y2:4,tx:97,ty:25,rotate:-32},{t:'WIDTH 2',x1:306,y1:98,x2:306,y2:166,tx:306,ty:132,rotate:-90}],
+  roman:[{t:'LENGTH 1',x1:65,y1:24,x2:208,y2:24,tx:136,ty:16},{t:'LENGTH 2',x1:65,y1:194,x2:274,y2:194,tx:170,ty:186},{t:'WIDTH',x1:45,y1:39,x2:45,y2:171,tx:45,ty:105,rotate:-90}],
+  kidney:[{t:'DIAMETER 1',x1:116,y1:55,x2:116,y2:153,tx:116,ty:104,rotate:-90},{t:'DIAMETER 2',x1:255,y1:75,x2:255,y2:145,tx:255,ty:110,rotate:-90}]
+ };
+ const shape=poolPath(k);
+ let s=`<defs>
+ <linearGradient id="water" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#36b8f0"/><stop offset="1" stop-color="#0878c4"/></linearGradient>
+ <marker id="dimArrow" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 L7 3.5 L0 7 Z" fill="#173e5d"/></marker>
+ </defs>
+ <g fill="url(#water)" stroke="#3d5969" stroke-width="5" stroke-linejoin="round">${shape}</g>`;
+ // Clean technical dimension lines: thin extension lines, crisp arrowheads, and high-contrast label plates.
+ (dims[k]||[]).forEach(d=>{
+   let x1=d.x1,y1=d.y1,x2=d.x2,y2=d.y2;
+   // Extension lines are kept separate from the dimension line for an engineering-drawing look.
+   if(k==='oval' && d.t==='LENGTH') s+=`<path d="M60 105 V198 M300 105 V198" stroke="#173e5d" stroke-width="1.15" stroke-dasharray="3 3" opacity=".75" fill="none"/>`;
+   if(k==='rectangle' && d.t==='LENGTH') s+=`<path d="M65 171 V198 M295 171 V198" stroke="#173e5d" stroke-width="1.15" stroke-dasharray="3 3" opacity=".75" fill="none"/>`;
+   if(k==='lazy' && d.t==='LENGTH 1') s+=`<path d="M143 22 L151 15 M202 98 L211 92" stroke="#173e5d" stroke-width="1.1" opacity=".8" fill="none"/>`;
+   if(k==='lazy' && d.t==='LENGTH 2') s+=`<path d="M72 66 L55 81 M164 166 L148 174" stroke="#173e5d" stroke-width="1.1" opacity=".8" fill="none"/>`;
+   if(k==='lazy' && d.t==='LENGTH 3') s+=`<path d="M202 98 V84 M286 98 V84" stroke="#173e5d" stroke-width="1.1" opacity=".8" fill="none"/>`;
+   if(k==='lazy' && d.t==='LENGTH 4') s+=`<path d="M164 166 V182 M286 166 V182" stroke="#173e5d" stroke-width="1.1" opacity=".8" fill="none"/>`;
+   if(k==='lazy' && d.t==='WIDTH 1') s+=`<path d="M72 66 L61 48 M143 22 L132 4" stroke="#173e5d" stroke-width="1.1" opacity=".8" fill="none"/>`;
+   if(k==='lazy' && d.t==='WIDTH 2') s+=`<path d="M286 98 H306 M286 166 H306" stroke="#173e5d" stroke-width="1.1" opacity=".8" fill="none"/>`;
+   if(k==='rectangle' && d.t==='WIDTH') s+=`<path d="M45 39 H62 M45 171 H62" stroke="#173e5d" stroke-width="1.15" opacity=".75" fill="none"/>`;
+   if(k==='roman' && d.t==='LENGTH 2') s+=`<path d="M65 171 V198 M274 171 V198" stroke="#173e5d" stroke-width="1.15" stroke-dasharray="3 3" opacity=".75" fill="none"/>`;
+   if(k==='roman' && d.t==='LENGTH 1') s+=`<path d="M65 19 V29 M208 19 V29" stroke="#173e5d" stroke-width="1.25" stroke-linecap="round" fill="none"/>`;
+   s+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" opacity=".95"/>`;
+   s+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#173e5d" stroke-width="1.65" stroke-linecap="round" marker-start="url(#dimArrow)" marker-end="url(#dimArrow)"/>`;
+   // Center every annotation on its dimension line, then offset it slightly to the
+   // outside of the line. No label plates: a subtle glyph halo keeps text readable.
+   const mx=(x1+x2)/2, my=(y1+y2)/2;
+   const dx=x2-x1, dy=y2-y1, len=Math.hypot(dx,dy)||1;
+   let ox=d.tx-mx, oy=d.ty-my, off=Math.hypot(ox,oy);
+   if(off<1){
+     if(Math.abs(dx)<Math.abs(dy)){ ox=8; oy=0; }
+     else { ox=0; oy=-8; }
+   } else { ox=ox/off*8; oy=oy/off*8; }
+   const tx=mx+ox, ty=my+oy;
+   const angle=d.rotate!==undefined?d.rotate:Math.atan2(dy,dx)*180/Math.PI;
+   const rot=` transform="rotate(${angle} ${tx} ${ty})"`;
+   const width=Math.max(52,d.t.length*6.2+14);
+   s+=`<g${rot}><text x="${tx}" y="${ty+3.4}" text-anchor="middle" fill="#173e5d" stroke="#eaf7ff" stroke-width="2.6" stroke-linejoin="round" paint-order="stroke fill" font-size="9.5" font-family="Arial, sans-serif" font-weight="800" letter-spacing=".55">${d.t}</text></g>`;
+ });
+ $('diagram').innerHTML=s;
+ $('diagramNote').textContent=({lazy:'Follow each labeled edge and width; irregular-shape area is estimated.',kidney:'Each diameter is shown across the center of its respective lobe.',roman:'Length 1 is the straight section; Length 2 is the overall length.'})[k]||'Dimension arrows show exactly where each measurement should be taken.';
+}
+function updateCalcNote(){
+ const areaUnit=units==='english'?'sq ft':'m²';
+ const depthUnit=units==='english'?'ft':'m';
+ const volumeUnit=units==='english'?'gallons':'liters';
+ const volumeFormula=units==='english'
+   ? `Volume = surface area (${areaUnit}) × average depth (${depthUnit}) × 7.48052 to convert cubic feet to US gallons.`
+   : `Volume = surface area (${areaUnit}) × average depth (${depthUnit}) × 1,000 to convert cubic meters to liters.`;
+ const shapes={
+  round:`The Round pool area is calculated as a circle: π × (diameter ÷ 2)².`,
+  oval:`The Oval pool area is estimated as an ellipse: π × length × width ÷ 4.`,
+  rectangle:`The Rectangle pool area is length × width.`,
+  lazy:`The Lazy-L area is estimated by adding two trapezoid-like sections: average of Lengths 1 and 2 × Width 1, plus average of Lengths 3 and 4 × Width 2. This is an approximation of the irregular outline.`,
+  roman:`The Roman pool area is estimated as a rectangular straight section plus a semicircular end. The straight section is derived from the straight-section and overall-length measurements, and the rounded end uses half a circle based on the pool width.`,
+  kidney:`The Kidney pool area is estimated from the two lobe diameters using 0.45 × the average of Diameter 1 and Diameter 2 × the larger diameter. Because a kidney outline varies, this is an approximate area formula.`
+ };
+ const shapeNote=shapes[selected];
+ const depthNote=`Average depth = (minimum depth + maximum depth) ÷ 2. `;
+ const approximation=(selected==='lazy'||selected==='roman'||selected==='kidney')?' This shape formula is an estimate; actual volume can vary with the pool’s exact outline and floor profile.':'';
+ $('calcNote').innerHTML=`<strong>How the ${defs[selected].name} pool is calculated:</strong> ${shapeNote} ${depthNote}${volumeFormula}${approximation}`;
+}
+function calculate(){const d=defs[selected],v={};for(const [key,label] of d.fields){const n=Number($(key).value);if($(key).value.trim()===''||!Number.isFinite(n)||n<=0){$('error').textContent=`Please enter a number greater than zero for ${label.toLowerCase()}.`;$('error').style.display='block';$(key).focus();return;}v[key]=n;}if(v.maxDepth<v.minDepth){$('error').textContent='Maximum depth must be greater than or equal to minimum depth.';$('error').style.display='block';$('maxDepth').focus();return;}let a=0;switch(selected){case'round':a=Math.PI*Math.pow(v.diameter/2,2);break;case'oval':a=Math.PI*v.length*v.width/4;break;case'rectangle':a=v.length*v.width;break;case'lazy':a=((v.length1+v.length2)/2*v.width1)+((v.length3+v.length4)/2*v.width2);break;case'roman':{const straight=Math.min(v.length1,v.length2-v.width/2);a=Math.max(0,straight)*v.width+(Math.PI*Math.pow(v.width/2,2)/2);break;}case'kidney':a=.45*(v.diameter1+v.diameter2)/2*Math.max(v.diameter1,v.diameter2);break;}if(!Number.isFinite(a)||a<=0){$('error').textContent='These measurements do not produce a valid area. Please check the dimensions.';$('error').style.display='block';return;}const u=unitInfo();const volume=a*((v.minDepth+v.maxDepth)/2)*u.factor;$('area').innerHTML=`${Number(a.toFixed(2)).toLocaleString(undefined,{maximumFractionDigits:2})} <span style="font-size:14px;font-weight:650">${u.area}</span>`;$('gallons').textContent=Math.round(volume).toLocaleString()+' '+u.volume;$('areaSub').textContent=units==='english'?'Estimated water surface':'Estimated water surface';$('volumeSub').textContent=units==='english'?'Based on average pool depth':'Estimated water volume';updateCalcNote();$('error').style.display='none';}
+function clearResults(){const u=unitInfo();$('area').innerHTML=`— <span style="font-size:14px;font-weight:650">${u.area}</span>`;$('gallons').textContent='—';updateCalcNote();}
+$('englishBtn').addEventListener('click',()=>setUnits('english'));$('metricBtn').addEventListener('click',()=>setUnits('metric'));$('calculate').addEventListener('click',calculate);$('reset').addEventListener('click',()=>{renderFields();clearResults();});$('fields').addEventListener('keydown',e=>{if(e.key==='Enter')calculate()});$('volumeLabel').textContent=units==='english'?'Estimated number of gallons':'Estimated number of liters';renderShapes();renderFields();drawDiagram();clearResults();
+</script></body></html>
