@@ -86,7 +86,7 @@ function drawDiagram(){
    const angle=d.rotate!==undefined?d.rotate:Math.atan2(dy,dx)*180/Math.PI;
    const rot=` transform="rotate(${angle} ${tx} ${ty})"`;
    const width=Math.max(52,d.t.length*6.2+14);
-   s+=`<g${rot}><text x="${tx}" y="${ty+3.4}" text-anchor="middle" fill="#173e5d" stroke="#eaf7ff" stroke-width="1.0" stroke-linejoin="round" paint-order="stroke fill" font-size="${k==='kidney'?8.8:9.5}" font-family="Arial, sans-serif" font-weight="800" letter-spacing=".35">${d.t}</text></g>`;
+   s+=`<g${rot}><text x="${tx}" y="${ty+3.4}" text-anchor="middle" fill="#173e5d" stroke="#eaf7ff" stroke-width="1.0" stroke-linejoin="round" paint-order="stroke fill" font-size="9.5" font-family="Arial, sans-serif" font-weight="800" letter-spacing=".35">${d.t}</text></g>`;
  });
  $('diagram').innerHTML=s;
  $('diagramNote').textContent=({lazy:'Follow each labeled edge and width; irregular-shape area is estimated.',kidney:'Each diameter is shown across the center of its respective lobe.',roman:'Length 1 is the straight section; Length 2 is the overall length.'})[k]||'Dimension arrows show exactly where each measurement should be taken.';
