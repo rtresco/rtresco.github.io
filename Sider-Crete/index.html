@@ -82,7 +82,8 @@ function drawDiagram(){
      if(Math.abs(dx)<Math.abs(dy)){ ox=8; oy=0; }
      else { ox=0; oy=-8; }
    } else { ox=ox/off*8; oy=oy/off*8; }
-   const tx=mx+ox, ty=my+oy;
+   const tx=k==='kidney'&&d.rotate===0?d.tx:mx+ox;
+   const ty=k==='kidney'&&d.rotate===0?d.ty:my+oy;
    const angle=d.rotate!==undefined?d.rotate:Math.atan2(dy,dx)*180/Math.PI;
    const rot=` transform="rotate(${angle} ${tx} ${ty})"`;
    const width=Math.max(52,d.t.length*6.2+14);
